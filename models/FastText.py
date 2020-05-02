@@ -9,6 +9,8 @@ class Config(object):
         self.dropout = 0.4                                      
         self.dim_embed = 300
         self.hidden_size = 256
+        self.pretrained = False
+        self.pretrained_path = None
 
 
 class FastText(nn.Module):
@@ -18,8 +20,13 @@ class FastText(nn.Module):
         self.hidden_size = config.hidden_size
         self.n_vocab = vocab_size
         self.num_classes = num_classes
+        self.pretrained = config.pretrained
+        self.pretrained_path = config.pretrained_path
 
-        self.embedding = nn.Embedding(self.n_vocab, self.dim_embed)
+        if self.pretrained: 
+            self.embedding = nn.Embedding.from_pretrained(self.pretrained_path, freeze=False)
+        else:
+            self.embedding = nn.Embedding(self.n_vocab, self.dim_embed)
 
         self.dropout = nn.Dropout(config.dropout)
         self.fc1 = nn.Linear(self.dim_embed, self.hidden_size)
