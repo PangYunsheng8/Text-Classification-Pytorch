@@ -12,7 +12,7 @@ class Config(object):
 
 
 class FastText(nn.Module):
-    def __init__(self, args, config, vocab_size, num_classes):
+    def __init__(self, config, vocab_size, num_classes):
         super(FastText, self).__init__()
         self.dim_embed = config.dim_embed
         self.hidden_size = config.hidden_size
@@ -36,3 +36,19 @@ class FastText(nn.Module):
         x = self.fc2(x)
 
         return x
+
+
+if __name__ == "__main__":
+    config = Config()
+    max_len = 100
+    batch_size = 8
+    vocab_size = 500
+    num_classes = 2
+
+    fasttext = FastText(config, vocab_size, num_classes)
+
+    x = torch.LongTensor(batch_size, max_len).random_(0, vocab_size)
+    print(x.size())  # [8, 100]
+
+    x = fasttext(x)
+    print(x.size())

@@ -11,7 +11,7 @@ class Options():
 
         # model
         parser.add_argument("--model", type=str, default="FastText", help="model name")
-        parser.add_argument("--mode", type=str, default="inference", help="train or inference")
+        parser.add_argument("--mode", type=str, default="train", help="train or inference")
 
         # dataset
         parser.add_argument("--dataset", type=str, default="climate", help="dataset name")
