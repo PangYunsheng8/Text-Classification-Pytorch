@@ -9,6 +9,8 @@ class Config(object):
         self.dim_embed = 300
         self.num_filters = 256
         self.kernel_size = 3
+        self.pretrained = False
+        self.pretrained_path = None
 
 
 class DPCNN(nn.Module):
@@ -19,8 +21,13 @@ class DPCNN(nn.Module):
         self.kernel_size = config.kernel_size
         self.n_vocab = vocab_size
         self.num_classes = num_classes
+        self.pretrained = config.pretrained
+        self.pretrained_path = config.pretrained_path
 
-        self.embedding = nn.Embedding(self.n_vocab, self.dim_embed)
+        if self.pretrained: 
+            self.embedding = nn.Embedding.from_pretrained(self.pretrained_path, freeze=False)
+        else:
+            self.embedding = nn.Embedding(self.n_vocab, self.dim_embed)
 
         self.conv_region = nn.Conv2d(1, self.num_filters, (self.kernel_size, self.dim_embed), stride=1)
         self.conv = nn.Conv2d(self.num_filters, self.num_filters, (self.kernel_size, 1), stride=1)
