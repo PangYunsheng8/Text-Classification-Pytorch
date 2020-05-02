@@ -28,7 +28,7 @@ def main():
     elif args.model == "FastText":
         from models.FastText import FastText, Config
         config = Config()
-        model = FastText(args, config, vocab_size, num_class)
+        model = FastText(config, vocab_size, num_class)
     model.to(DEVICE)
 
     if args.mode == "train":
