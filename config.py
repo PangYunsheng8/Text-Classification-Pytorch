@@ -15,18 +15,16 @@ class Options():
 
         # dataset
         parser.add_argument("--dataset", type=str, default="climate", help="dataset name")
-        # parser.add_argument("--train_path", type=str, default="data/all-news/train_3304.pkl", help="path of training set")
-        # parser.add_argument("--val_path", type=str, default="data/all-news/dev_100.pkl", help="path of val set")
-        # parser.add_argument("--test_path", type=str, default="data/all-news/test_1410.pkl", help="path of test set")
-        parser.add_argument("--train_path", type=list, default=["data/theguardian/train_pos_token_1154.pkl", "data/theguardian/guardian_token_2200.pkl"], help="path of training set")
-        parser.add_argument("--val_path", type=str, default="data/all-news/dev_100.pkl", help="path of val set")
-        parser.add_argument("--test_path", type=str, default="data/all-news/test_1410.pkl", help="path of test set")
+        parser.add_argument("--train_path", type=str, default="data/train.json", help="path of training set")
+        parser.add_argument("--val_path", type=str, default="data/valid.json", help="path of val set")
+        parser.add_argument("--test_path", type=str, default="", help="path of test set")
         parser.add_argument("--vocab_path", type=str, default="data/vocab.pkl", help="path of vocab")
-        parser.add_argument("--max_vocab_size", type=int, default=30000, help="max vocab size")
-        parser.add_argument("--max_seq_size", type=int, default=1500, help="max size of sequence")
+        parser.add_argument("--max_vocab_size", type=int, default=50000, help="max vocab size")
+        parser.add_argument("--max_len", type=int, default=1500, help="max length of sequence")
+        parser.add_argument("--min_freq", type=int, default=3, help="min frequency of words")
 
         # training hyper params
-        parser.add_argument("--num_epochs", type=int, default=100, metavar="N", help="number of epochs to train")
+        parser.add_argument("--num_epochs", type=int, default=30, metavar="N", help="number of epochs to train")
         parser.add_argument("--batch_size", type=int, default=32, metavar="N", help="input batch size for training")
 
         # optimizer params
@@ -40,8 +38,6 @@ class Options():
         # save
         parser.add_argument("--log_path", type=str, default="log/", help="path of log")
         parser.add_argument("--save_path", type=str, default="saved/", help="path of save")
-
-        parser.add_argument("--requeire_improvement", type=int, default=1000)
 
         # the parser
         self.parser = parser

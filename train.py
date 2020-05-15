@@ -27,9 +27,7 @@ def train(args, model, train_iter, dev_iter):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     total_batch = 0
-    dev_best_loss = float('inf')
     dev_best_acc = 0
-    f1_best = 0
     writer = SummaryWriter(log_dir=args.log_path + '/' + args.model + '/' + time.strftime('%m-%d_%H.%M', time.localtime()))
     for epoch in range(args.num_epochs):
         print('Epoch [{}/{}]'.format(epoch + 1, args.num_epochs))
@@ -46,31 +44,22 @@ def train(args, model, train_iter, dev_iter):
                 y_true = label.data.cpu()
                 y_pred = torch.max(outputs.data, 1)[1].cpu()
                 train_acc = metrics.accuracy_score(y_true, y_pred)
-                dev_acc, dev_loss, dev_f1 = evaluate(model, dev_iter)
+                dev_acc, dev_loss = evaluate(model, dev_iter)
 
-                # if dev_loss < dev_best_loss:
-                #     dev_best_loss = dev_loss
-                #     torch.save(model.state_dict(), args.save_path + '/' + args.model + '.ckpt')
-                #     print("saved model, best acc on dev: %.4f" % dev_acc)
-
-                # if dev_acc > dev_best_acc:
-                #     dev_best_acc = dev_acc
-                #     torch.save(model.state_dict(), args.save_path + '/' + args.model + '.ckpt')
-                #     print("saved model, best acc on dev: %.4f" % dev_best_acc)
-                if dev_f1 > f1_best:
-                    f1_best = dev_f1
+                if dev_acc > dev_best_acc:
+                    dev_best_acc = dev_acc
                     torch.save(model.state_dict(), args.save_path + '/' + args.model + '.ckpt')
-                    print("saved model, best f1 on dev: %.4f, acc on dev: %.4f" % (f1_best, dev_acc))
+                    print("saved model, best acc on dev: %.4f" % dev_acc)
 
-                msg = 'Iter: {0:>6},  Train Loss: {1:>5.2},  Train Acc: {2:>6.2%},  Val Loss: {3:>5.2},  Val Acc: {4:>6.2%}, Val f1: {5: >6.2%}'
-                print(msg.format(total_batch, loss.item(), train_acc, dev_loss, dev_acc, dev_f1))
+                msg = 'Iter: {0:>6},  Train Loss: {1:>5.2},  Train Acc: {2:>6.2%},  Val Loss: {3:>5.2},  Val Acc: {4:>6.2%}'
+                print(msg.format(total_batch, loss.item(), train_acc, dev_loss, dev_acc))
                 writer.add_scalar("loss/train", loss.item(), total_batch)
                 writer.add_scalar("loss/dev", dev_loss, total_batch)
                 writer.add_scalar("acc/train", train_acc, total_batch)
                 writer.add_scalar("acc/dev", dev_acc, total_batch)
                 model.train()
             total_batch += 1
-    write.close()
+    writer.close()
 
 
 def evaluate(model, dev_iter):
@@ -89,12 +78,8 @@ def evaluate(model, dev_iter):
             y_pred = torch.max(outputs.data, 1)[1].cpu().numpy()
             y_trues = np.append(y_trues, y_true)
             y_preds = np.append(y_preds, y_pred)
-    # for i in range(len(y_preds)):
-    #     if y_preds[i] != y_trues[i]:
-    #         print(y_trues[i], y_preds[i])
     acc = metrics.accuracy_score(y_trues, y_preds)
-    f1 = metrics.f1_score(y_trues, y_preds)
-    return acc, loss_total / len(dev_iter), f1
+    return acc, loss_total / len(dev_iter)
 
 
 def inference(args, model, test_iter):

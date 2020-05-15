@@ -31,7 +31,7 @@ class DPCNN(nn.Module):
 
         self.conv_region = nn.Conv2d(1, self.num_filters, (self.kernel_size, self.dim_embed), stride=1)
         self.conv = nn.Conv2d(self.num_filters, self.num_filters, (self.kernel_size, 1), stride=1)
-        self.max_pool = nn.MaxPool2d(kernel_size=(3, 1), stride=2)
+        self.max_pool = nn.MaxPool2d(kernel_size=(self.kernel_size, 1), stride=2)
         self.padding1 = nn.ZeroPad2d((0, 0, 1, 1))  # top bottom
         self.padding2 = nn.ZeroPad2d((0, 0, 0, 1))  # bottom
         self.relu = nn.ReLU()
@@ -73,7 +73,7 @@ class DPCNN(nn.Module):
 
 if __name__ == "__main__":
     config = Config()
-    max_len = 100
+    max_len = 1600
     batch_size = 8
     vocab_size = 500
     num_classes = 2

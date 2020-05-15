@@ -45,7 +45,6 @@ class ToTensor(object):
         text = np.array(text)
         label = np.array(label)
         text = torch.from_numpy(text).to(torch.int64).to(DEVICE)
-        # text = torch.LongTensor(text).to(DEVICE)
         label = torch.from_numpy(label).to(torch.int64).to(DEVICE)
 
         return {'text': text, 'label': label}

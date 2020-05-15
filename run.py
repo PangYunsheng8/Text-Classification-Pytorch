@@ -21,22 +21,27 @@ def main():
     vocab_size = len(vocab)
 
     # train
-    if args.model == "TextCNN":
+    if args.model == "TextCNN": # 0.9846
         from models.TextCNN import TextCNN, Config
         config = Config()
-        model = TextCNN(args, config, num_class)
-    elif args.model == "FastText":
+        model = TextCNN(config, args.max_len, vocab_size, num_class)
+    elif args.model == "FastText": # 0.9807(20 epoch), 0.9884(30 epoch)
         from models.FastText import FastText, Config
         config = Config()
         model = FastText(config, vocab_size, num_class)
+    elif args.model == "DPCNN":
+        from models.DPCNN import DPCNN, Config
+        config = Config()
+        model = DPCNN(config, vocab_size, num_class)
+    elif args.model == "Transformer":
+        from models.Transformer import Transformer, Config
+        config = Config()
+        model = Transformer(config, args.max_len, vocab_size, num_class)
     model.to(DEVICE)
 
     if args.mode == "train":
         init_network(model)
         train(args, model, train_loader, val_loader)
-        # model.load_state_dict(torch.load(args.save_path + '/' + args.model + '.ckpt'))
-        # acc, _, res = evaluate(model, val_loader)
-        # print(acc)
     elif args.mode == "inference":
         model.load_state_dict(torch.load(args.save_path + '/' + args.model + '.ckpt'))
         y_preds = inference(args, model, test_loader)

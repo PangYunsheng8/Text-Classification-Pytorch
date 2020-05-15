@@ -36,7 +36,7 @@ class Transformer(nn.Module):
         else:
             self.embedding = nn.Embedding(self.n_vocab, self.dim_embed)
 
-        # self.postion_embedding = Positional_Encoding(self.dim_embed, self.max_len, config.dropout, config.device)
+        self.postion_embedding = Positional_Encoding(self.dim_embed, self.max_len, config.dropout)
         self.encoder = Encoder(self.dim_model, self.num_head, self.hidden_size, config.dropout)
         self.encoders = nn.ModuleList([copy.deepcopy(self.encoder) for _ in range(self.num_encoder)])
         self.fc = nn.Linear(self.max_len * self.dim_model, self.num_classes)
@@ -50,19 +50,19 @@ class Transformer(nn.Module):
         return x
 
 
-# class Positional_Encoding(nn.Module):
-#     def __init__(self, embed, pad_size, dropout, device):
-#         super(Positional_Encoding, self).__init__()
-#         self.device = device
-#         self.pe = torch.tensor([[pos / (10000.0 ** (i // 2 * 2.0 / embed)) for i in range(embed)] for pos in range(pad_size)])
-#         self.pe[:, 0::2] = np.sin(self.pe[:, 0::2])
-#         self.pe[:, 1::2] = np.cos(self.pe[:, 1::2])
-#         self.dropout = nn.Dropout(dropout)
+class Positional_Encoding(nn.Module):
+    def __init__(self, embed, pad_size, dropout):
+        super(Positional_Encoding, self).__init__()
+        # self.device = device
+        self.pe = torch.tensor([[pos / (10000.0 ** (i // 2 * 2.0 / embed)) for i in range(embed)] for pos in range(pad_size)])
+        self.pe[:, 0::2] = np.sin(self.pe[:, 0::2])
+        self.pe[:, 1::2] = np.cos(self.pe[:, 1::2])
+        self.dropout = nn.Dropout(dropout)
 
-#     def forward(self, x):
-#         out = x + nn.Parameter(self.pe, requires_grad=False).to(self.device)
-#         out = self.dropout(out)
-#         return out
+    def forward(self, x):
+        out = x + nn.Parameter(self.pe, requires_grad=False)#.to(self.device)
+        out = self.dropout(out)
+        return out
 
 
 class Encoder(nn.Module):
