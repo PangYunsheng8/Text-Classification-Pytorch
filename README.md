@@ -6,9 +6,9 @@
 
 实验环境
 ---  
-python>=3.6
-pytorch>=1.0
-tqdm
-sklearn
+python>=3.6  
+pytorch>=1.0  
+tqdm  
+sklearn  
 tensorboardX
 
